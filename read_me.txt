@@ -6,4 +6,4 @@ currently all set in the diff_drive_pure_pursuit_updated_copy.py file
 but I will work on setting up a YAML file in the future
 
 To disable E_STOP and publish twist messages:
-ros2 topic pub /STOP std_msgs/msg/Bool 'data: True' 
+ros2 topic pub /STOP std_msgs/msg/Bool 'data: false' 
