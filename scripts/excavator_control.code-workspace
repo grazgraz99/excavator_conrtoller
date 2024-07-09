@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../excavator_trajectory_controlrospy"
+		}
+	],
+	"settings": {}
+}

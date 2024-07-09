@@ -1,0 +1,7 @@
+local_controller:
+  ros__parameters:
+    lookahead_distance: 2.0
+    steering_gain: .5
+    stationary_turn_angle: .4
+    simulate_turtlebot: True
+    odom_topic: 'odom'
