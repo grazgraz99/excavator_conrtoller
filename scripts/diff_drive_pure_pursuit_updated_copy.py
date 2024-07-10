@@ -2,7 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray, Bool
-from geometry_msgs.msg import Twist, Point
+from geometry_msgs.msg import Twist, Point, Pose2D
 from nav_msgs.msg import Odometry
 import numpy as np
 from transforms3d.euler import quat2euler
@@ -29,12 +29,17 @@ class state_calc(Node):
         self.declare_parameter('stationary_turn_angle')
         self.declare_parameter('simulate_turtlebot')
         self.declare_parameter('odom_topic')
-        self.declare_parameter('initial_state',[0,0,0,0])
 
         self.steering_gain=self.get_parameter('steering_gain').value
         self.simulate_turtlebot=self.get_parameter('simulate_turtlebot').value
         self.stationary_turn_angle=self.get_parameter('stationary_turn_angle').value
         self.look_ahead_distance=self.get_parameter('lookahead_distance').value#1
+        self.odom_topic=self.get_parameter('odom_topic').value
+
+        if self.odom_topic=='odom':
+            odom_msg_type=Odometry
+        elif self.odom_topic=='gps_pose':
+            odom_msg_type=Pose2D
 
         self.target_behind_flag=False 
         self.publish_sample_path_flag=True
@@ -54,21 +59,21 @@ class state_calc(Node):
         self.qw=0
         self.yaw=0
 
-
         self.goal_num=0
         
 
         self.path_pub=self.create_publisher(Float32MultiArray, "waypoints",10)#setup publisher
-        self.cmd_vel_pub=self.create_publisher(Twist,"cmd_vel",10)#setup cmd publisher
+        #'cmd_vel' is the actual topic to publish to
+        self.cmd_vel_pub=self.create_publisher(Twist,"fake_cmd_vel",10)#setup cmd publisher
         self.target_pub=self.create_publisher(Float32MultiArray,"current_target",10)
         
 
 
-        odom_topic=self.get_parameter('odom_topic').value
-        self.odom_subscriber=self.create_subscription(Odometry,odom_topic,self.odom_callback,10)
+        
+        self.odom_subscriber=self.create_subscription(Odometry,self.odom_topic,self.odom_callback,10)
         self.emergency_stop_subscriber=self.create_subscription(Bool, 'STOP', self.e_stop_callback, 10)
 
-        current_state=self.get_parameter('initial_state').value
+
 
 
         self.load_pts()#load map
@@ -113,22 +118,28 @@ class state_calc(Node):
         self.y_values=df['y'].tolist()
 
     def odom_callback(self, data):
-        self.x_pos=data.pose.pose.position.x
-        self.y_pos=data.pose.pose.position.y
-        #print(f'x: {self.x_pos}, y: {self.y_pos}')
+        if self.odom_topic=='odom':#condition for operating simulation
+            self.x_pos=data.pose.pose.position.x
+            self.y_pos=data.pose.pose.position.y
+            #print(f'x: {self.x_pos}, y: {self.y_pos}')
 
-        #bot orientation(quaternion form)
-        self.qx=data.pose.pose.orientation.x
-        self.qy=data.pose.pose.orientation.y
-        self.qz=data.pose.pose.orientation.z
-        self.qw=data.pose.pose.orientation.w
-        self.quaternion= [self.qw, self.qx, self.qy, self.qz]
+            #bot orientation(quaternion form)
+            self.qx=data.pose.pose.orientation.x
+            self.qy=data.pose.pose.orientation.y
+            self.qz=data.pose.pose.orientation.z
+            self.qw=data.pose.pose.orientation.w
+            self.quaternion= [self.qw, self.qx, self.qy, self.qz]
 
-        ##print(f'x_pos: {self.x_pos} y_pos: {self.y_pos}')
-        #Calculate heading angle(euler angle form)
-        euler=quat2euler(self.quaternion)
-        ##print(f'euler {euler}')
-        self.yaw=euler[2]
+            ##print(f'x_pos: {self.x_pos} y_pos: {self.y_pos}')
+            #Calculate heading angle(euler angle form)
+            euler=quat2euler(self.quaternion)
+            ##print(f'euler {euler}')
+            self.yaw=euler[2]
+
+        elif self.odom_topic=='gps_pose':#condition for operating excavator
+            self.x_pos=data.x
+            self.y_pos=data.y
+            self.yaw=data.theta
 
         print(f'path size: {self.path.size}')
         print(f'path: {self.path}')
