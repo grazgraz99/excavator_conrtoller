@@ -8,19 +8,19 @@ import os
 
 def generate_launch_description():
     ld = LaunchDescription()
-
+    
     config = os.path.join(
         get_package_share_directory('excavator_control'),
         'config',
         'params.yaml'
     )
-    print(f"Resolved config path: {config}")
+    
     rviz_config = os.path.join(
         get_package_share_directory('excavator_control'),
         'rviz',
         'odom_and_markers.rviz'
     )
-    print(f"Resolved rviz_config path: {rviz_config}")
+    #print(f"Resolved rviz_config path: {rviz_config}")
     ld.add_action(SetEnvironmentVariable('TURTLEBOT3_MODEL', 'burger'))
     # Path to the TurtleBot3 Gazebo launch file
     turtlebot3_gazebo_dir = get_package_share_directory('turtlebot3_gazebo')
