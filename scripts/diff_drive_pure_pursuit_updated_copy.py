@@ -29,12 +29,14 @@ class state_calc(Node):
         self.declare_parameter('stationary_turn_angle')
         self.declare_parameter('simulate_turtlebot')
         self.declare_parameter('odom_topic')
+        self.declare_parameter('command_vel_topic')
 
         self.steering_gain=self.get_parameter('steering_gain').value
         self.simulate_turtlebot=self.get_parameter('simulate_turtlebot').value
         self.stationary_turn_angle=self.get_parameter('stationary_turn_angle').value
         self.look_ahead_distance=self.get_parameter('lookahead_distance').value#1
         self.odom_topic=self.get_parameter('odom_topic').value
+        self.cmd_vel_topic=self.get_parameter('command_vel_topic').value
 
         if self.odom_topic=='odom':
             odom_msg_type=Odometry
@@ -64,7 +66,7 @@ class state_calc(Node):
 
         self.path_pub=self.create_publisher(Float32MultiArray, "waypoints",10)#setup publisher
         #'cmd_vel' is the actual topic to publish to
-        self.cmd_vel_pub=self.create_publisher(Twist,"fake_cmd_vel",10)#setup cmd publisher
+        self.cmd_vel_pub=self.create_publisher(Twist,self.cmd_vel_topic,10)#setup cmd publisher
         self.target_pub=self.create_publisher(Float32MultiArray,"current_target",10)
         
 
@@ -78,6 +80,7 @@ class state_calc(Node):
 
         self.load_pts()#load map
         self.point_index=0
+        self.first_publish=True
         self.publish_path()
         self.timer = self.create_timer(2, self.publish_path)
         self.path_subscriber=self.create_subscription(Float32MultiArray, "waypoints", self.waypoint_callback, 10)
@@ -91,16 +94,21 @@ class state_calc(Node):
 
     def publish_path(self):
         data=Float32MultiArray()
-        self.next_x_vals=self.x_values[self.point_index:self.point_index+50]
-        self.next_y_vals=self.y_values[self.point_index:self.point_index+50]
-        for i, j in zip(self.next_x_vals,self.next_y_vals):
-            data.data.append(i)
-            data.data.append(j)
-        #print(f'data: {data.data}')
-        self.path_pub.publish(data)
-        self.point_index+=50
+        if self.first_publish==True:
+            self.next_x_vals=self.x_values[:50]
+            self.next_y_vals=self.y_values[:50]
+            self.first_publish=False
+        else:    
+            self.next_x_vals=self.x_values[self.point_index:self.point_index+50]
+            self.next_y_vals=self.y_values[self.point_index:self.point_index+50]
+            for i, j in zip(self.next_x_vals,self.next_y_vals):
+                data.data.append(i)
+                data.data.append(j)
+            #print(f'data: {data.data}')
+            self.path_pub.publish(data)
+            self.point_index+=50
 
-        #self.waypoint_callback()
+            #self.waypoint_callback()
 
 
     def waypoint_callback(self, msg):
@@ -143,7 +151,8 @@ class state_calc(Node):
 
         print(f'path size: {self.path.size}')
         print(f'path: {self.path}')
-        if self.path.size<10:
+        if self.path.size<3:
+        #if len(self.distances)<10:
             return
         else:
             self.choose_goal()
@@ -209,12 +218,15 @@ class state_calc(Node):
                 command.angular.z=0.0
         else:
             command.linear.x=1.0#float(4*self.distance_error)
+            command.angular.z=0.0 #This is the condition that makes the
+            #robot only turn or only drive straight
 
         if self.EMERGENCY_STOP_FLAG==True:   
                 command.linear.x=0.0
                 command.angular.z=0.0#make the robot move
 
-        if len(self.distances)<=10:
+        if len(self.distances)<1:
+        # if not self.distances:
             command.linear.x=0.0
             command.angular.z=0.0#if there are no more points, stop moving
 
