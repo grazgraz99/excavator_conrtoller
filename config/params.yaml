@@ -6,6 +6,6 @@ local_controller:
     simulate_turtlebot: True #change to false for running on excavator
     odom_topic: 'odom' #change to 'odom' for simulation, 'gps_pose' for excavator
     #for command_vel_topic:
-    #'fake_cmd_vel': excavator control via PID node
+    #'pid_twist': excavator control via PID node
     #'cmd_vel': simulator control
-    command_vel_topic: 'cmd_vel' 
+    command_vel_topic: 'pid_twist' 
