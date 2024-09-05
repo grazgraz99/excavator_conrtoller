@@ -27,16 +27,16 @@ def generate_launch_description():
     turtlebot3_gazebo_launch = os.path.join(turtlebot3_gazebo_dir, 'launch', 'empty_world.launch.py')
 
     # Include the TurtleBot3 Gazebo launch file
-    gazebo_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(turtlebot3_gazebo_launch),
-        launch_arguments={'use_sim_time': 'true'}.items()
-    )
+    # gazebo_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(turtlebot3_gazebo_launch),
+    #     launch_arguments={'use_sim_time': 'true'}.items()
+    # )
 
-    path_markers_node = Node(
-        package="excavator_control",
-        executable="centerline_markers_node.py",
-        name="centerline_markers_node"
-    )
+    # path_markers_node = Node(
+    #     package="excavator_control",
+    #     executable="centerline_markers_node.py",
+    #     name="centerline_markers_node"
+    # )
 
     local_controller_node = Node(
         package="excavator_control",
@@ -45,16 +45,16 @@ def generate_launch_description():
         parameters=[config]
     )
     
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        arguments=['-d', rviz_config]#'/home/alex/ros2_ws/src/excavator_control/rviz/odom_and_markers.rviz']
-    )
+    # rviz_node = Node(
+    #     package='rviz2',
+    #     executable='rviz2',
+    #     name='rviz2',
+    #     arguments=['-d', rviz_config]#'/home/alex/ros2_ws/src/excavator_control/rviz/odom_and_markers.rviz']
+    # )
 
-    ld.add_action(gazebo_launch)
-    ld.add_action(path_markers_node)
+    # ld.add_action(gazebo_launch)
+    # ld.add_action(path_markers_node)
     ld.add_action(local_controller_node)
-    ld.add_action(rviz_node)
+    # ld.add_action(rviz_node)
     
     return ld

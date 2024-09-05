@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20240905-1531-Experimental"
+	Name="alex-Standard-PC-i440FX-PIIX-1996"
+	Generator="ctest-3.22.1"
+	CompilerName="/usr/bin/c++"
+	CompilerVersion="11.4.0"
+	OSName="Linux"
+	Hostname="alex-Standard-PC-i440FX-PIIX-1996"
+	OSRelease="6.5.0-44-generic"
+	OSVersion="#44~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 18 14:36:16 UTC 2"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="15"
+	ModelID="107"
+	ProcessorCacheSize="16384"
+	NumberOfLogicalCPU="4"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="2047"
+	TotalPhysicalMemory="7932"
+	LogicalProcessorsPerPhysical="1"
+	ProcessorClockFrequency="3187.2"
+	>
+	<Testing>
+		<StartDateTime>Sep 05 11:47 EDT</StartDateTime>
+		<StartTestTime>1725551240</StartTestTime>
+		<TestList/>
+		<EndDateTime>Sep 05 11:47 EDT</EndDateTime>
+		<EndTestTime>1725551240</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
