@@ -4,8 +4,8 @@ local_controller:
     steering_gain: .5
     stationary_turn_angle: .1 #.4
     simulate_turtlebot: True #change to false for running on excavator
-    odom_topic: 'GPSfix' #change to 'odom' for simulation, 'GPSfix' for excavator
+    odom_topic: 'gps_to_odom' #change to 'odom' for simulation, 'GPSfix' for excavator
     #for command_vel_topic:
     #'pid_twist': excavator control via PID node
     #'cmd_vel': simulator control
-    command_vel_topic: 'pid_twist' 
+    command_vel_topic: 'twist_mux/cmd_vel' 

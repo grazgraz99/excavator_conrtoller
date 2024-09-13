@@ -5,7 +5,7 @@ Lookahead distance, the control gains, and any other parameters are
 currently all set in the diff_drive_pure_pursuit_updated_copy.py file
 but I will work on setting up a YAML file in the future
 
-To disable E_STOP and publish twist messages:
+**To disable E_STOP and publish twist messages:
 ros2 topic pub /STOP std_msgs/msg/Bool 'data: False' 
 
 TO USE WITH THE PHYSICAL EXCAVATOR:
@@ -14,6 +14,9 @@ TO USE WITH THE PHYSICAL EXCAVATOR:
     a. odom_topic: 'GPSfix'
     b. command_vel_topic: 'pid_twist'
     c. simulate_turtlebot: False
+3. Publish a point for the excavator to navigate to:
+ros2 topic pub --once /goal_pose geometry_msgs/msg/Pose2D "x: 1.0, y: 10.0, theta: .5"
+
 
 **Currently, the portions of the launch file that launch gazebo, the markers, and rviz
 are commented out, they should be uncommented for use with simulation
